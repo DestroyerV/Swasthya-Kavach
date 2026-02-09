@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { analyzeBreathing, RespiratoryResult } from "@/lib/ai/respiratory";
 import { Audio } from "expo-av";
 import { Mic, Square } from "lucide-react-native";
@@ -5,6 +6,7 @@ import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -67,92 +69,120 @@ export default function RespiratoryCheckScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Respiratory Checkup</Text>
-      <Text style={styles.subtitle}>
-        Place the phone microphone near your chest or back. Take deep breaths
-        defined by the timer.
-      </Text>
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <Text style={styles.title}>Respiratory Checkup</Text>
+        <Text style={styles.subtitle}>
+          Place the phone microphone near your chest or back. Take deep breaths
+          defined by the timer.
+        </Text>
 
-      <View style={styles.circleContainer}>
-        {analyzing ? (
-          <ActivityIndicator size="large" color="#00b894" />
-        ) : recording ? (
-          <View style={styles.recordingContainer}>
-            <Text style={styles.recordingText}>Recording...</Text>
-            <TouchableOpacity onPress={stopRecording} style={styles.stopButton}>
-              <Square size={32} color="white" fill="white" />
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <TouchableOpacity
-            onPress={startRecording}
-            style={styles.recordButton}
-          >
-            <Mic size={40} color="white" />
-          </TouchableOpacity>
-        )}
-
-        {!recording && !analyzing && (
-          <Text style={styles.hintText}>Tap to Record</Text>
-        )}
-      </View>
-
-      {result && (
-        <View style={styles.resultContainer}>
-          <View style={styles.resultHeader}>
-            <Text style={styles.resultTitle}>Analysis: {result.condition}</Text>
-            <Text
-              style={[
-                styles.riskText,
-                result.risk === "Low" ? styles.textGreen : styles.textOrange,
-              ]}
+        <View style={styles.circleContainer}>
+          {analyzing ? (
+            <ActivityIndicator size="large" color={Colors.light.primary} />
+          ) : recording ? (
+            <View style={styles.recordingContainer}>
+              <Text style={styles.recordingText}>Recording...</Text>
+              <TouchableOpacity
+                onPress={stopRecording}
+                style={styles.stopButton}
+              >
+                <Square size={32} color="white" fill="white" />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity
+              onPress={startRecording}
+              style={styles.recordButton}
+              activeOpacity={0.8}
             >
-              {result.risk} Risk
-            </Text>
-          </View>
-          <Text style={styles.adviceText}>{result.advice}</Text>
+              <Mic size={40} color="white" />
+            </TouchableOpacity>
+          )}
+
+          {!recording && !analyzing && (
+            <Text style={styles.hintText}>Tap to Record</Text>
+          )}
         </View>
-      )}
-    </ScrollView>
+
+        {result && (
+          <View style={styles.resultContainer}>
+            <View style={styles.resultHeader}>
+              <Text style={styles.resultTitle}>
+                Analysis: {result.condition}
+              </Text>
+              <View
+                style={[
+                  styles.badge,
+                  result.risk === "Low" ? styles.badgeLow : styles.badgeHigh,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.badgeText,
+                    result.risk === "Low" ? styles.textLow : styles.textHigh,
+                  ]}
+                >
+                  {result.risk} Risk
+                </Text>
+              </View>
+            </View>
+            <View style={styles.divider} />
+            <Text style={styles.adviceTitle}>Recomendation</Text>
+            <Text style={styles.adviceText}>{result.advice}</Text>
+          </View>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: Colors.light.background,
+  },
+  content: {
     padding: 24,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#111827",
+    fontSize: 28,
+    fontWeight: "700",
+    color: Colors.light.text,
     marginBottom: 8,
+    marginTop: 10,
+    letterSpacing: -0.5,
   },
   subtitle: {
-    color: "#6b7280",
-    marginBottom: 32,
+    color: Colors.light.textSecondary,
+    marginBottom: 40,
+    fontSize: 16,
+    lineHeight: 24,
   },
   circleContainer: {
     alignItems: "center",
     justifyContent: "center",
     padding: 40,
-    backgroundColor: "#f9fafb",
+    backgroundColor: Colors.light.card,
     borderRadius: 160,
     height: 320,
     width: 320,
     alignSelf: "center",
     marginBottom: 32,
     borderWidth: 1,
-    borderColor: "#f3f4f6",
+    borderColor: Colors.light.border,
+    shadowColor: "#64748B",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 2,
   },
   recordingContainer: {
     alignItems: "center",
   },
   recordingText: {
     color: "#ef4444",
-    fontWeight: "bold",
+    fontWeight: "700",
     marginBottom: 16,
     fontSize: 20,
   },
@@ -163,50 +193,71 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     alignItems: "center",
     justifyContent: "center",
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowColor: "#ef4444",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   recordButton: {
     height: 96,
     width: 96,
-    backgroundColor: "#00b894",
+    backgroundColor: Colors.light.primary,
     borderRadius: 48,
     alignItems: "center",
     justifyContent: "center",
-    elevation: 5,
-    shadowColor: "#bbf7d0",
+    shadowColor: Colors.light.primary,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   hintText: {
     marginTop: 24,
-    color: "#9ca3af",
+    color: Colors.light.textSecondary,
     fontWeight: "500",
+    fontSize: 16,
   },
   resultContainer: {
-    backgroundColor: "#eff6ff",
+    backgroundColor: Colors.light.card,
     padding: 24,
-    borderRadius: 12,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#dbeafe",
+    borderColor: Colors.light.border,
+    marginBottom: 32,
+    shadowColor: "#64748B",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 2,
   },
   resultHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 16,
   },
   resultTitle: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "#111827",
+    fontWeight: "700",
+    color: Colors.light.text,
+    flex: 1,
   },
-  riskText: {
-    fontWeight: "bold",
+  badge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginLeft: 8,
+  },
+  badgeLow: {
+    backgroundColor: "#dcfce7",
+  },
+  badgeHigh: {
+    backgroundColor: "#fee2e2",
+  },
+  badgeText: {
+    fontSize: 12,
+    fontWeight: "700",
   },
   textGreen: {
     color: "#16a34a",
@@ -214,7 +265,27 @@ const styles = StyleSheet.create({
   textOrange: {
     color: "#ea580c",
   },
+  textLow: {
+    color: "#166534",
+  },
+  textHigh: {
+    color: "#991b1b",
+  },
+  adviceTitle: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: Colors.light.textSecondary,
+    marginBottom: 8,
+    textTransform: "uppercase",
+  },
   adviceText: {
-    color: "#374151",
+    color: Colors.light.text,
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: Colors.light.border,
+    marginBottom: 16,
   },
 });

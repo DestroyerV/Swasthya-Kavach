@@ -1,16 +1,24 @@
 import { Tabs } from "expo-router";
 import { ClipboardList, Home, Stethoscope, User } from "lucide-react-native";
 
+import { Colors } from "@/constants/theme";
+
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#00b894",
+        tabBarActiveTintColor: Colors.light.tint,
+        tabBarInactiveTintColor: Colors.light.tabIconDefault,
         headerShown: false,
         tabBarStyle: {
+          backgroundColor: Colors.light.card,
+          borderTopColor: Colors.light.border,
+          borderTopWidth: 1,
           height: 60,
           paddingBottom: 8,
           paddingTop: 8,
+          elevation: 0,
+          shadowOpacity: 0,
         },
       }}
     >

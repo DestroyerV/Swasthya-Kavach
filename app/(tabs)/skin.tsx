@@ -1,13 +1,17 @@
 import CameraComponent from "@/components/CameraComponent";
-import { Button } from "@/components/ui/Button";
+// import { Button } from "@/components/ui/Button";
+import { Colors } from "@/constants/theme";
 import { analyzeSkin, SkinResult } from "@/lib/ai/skin";
+import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 
@@ -42,87 +46,101 @@ export default function SkinCheckScreen() {
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Skin Infection Scanner</Text>
-      <Text style={styles.subtitle}>
-        Point the camera at the affected skin area (rash, spot, or wound).
-        Ensure good lighting.
-      </Text>
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <Text style={styles.title}>Skin Infection Scanner</Text>
+        <Text style={styles.subtitle}>
+          Point the camera at the affected skin area (rash, spot, or wound).
+          Ensure good lighting.
+        </Text>
 
-      {analyzing ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0984e3" />
-          <Text style={styles.loadingText}>Scanning for infections...</Text>
-        </View>
-      ) : result ? (
-        <View
-          style={[
-            styles.resultCard,
-            result.severity === "High" ? styles.cardHigh : styles.cardLow,
-          ]}
-        >
-          <Text style={styles.resultTitle}>{result.condition}</Text>
-          <View style={styles.severityContainer}>
-            <Text style={styles.severityLabel}>Severity:</Text>
-            <View
-              style={[
-                styles.badge,
-                result.severity === "High" ? styles.badgeHigh : styles.badgeLow,
-              ]}
-            >
-              <Text
+        {analyzing ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={Colors.light.primary} />
+            <Text style={styles.loadingText}>Scanning for infections...</Text>
+          </View>
+        ) : result ? (
+          <View style={styles.resultCard}>
+            <View style={styles.resultHeader}>
+              <Text style={styles.resultTitle}>{result.condition}</Text>
+              <View
                 style={[
-                  styles.badgeText,
-                  result.severity === "High" ? styles.textHigh : styles.textLow,
+                  styles.badge,
+                  result.severity === "High"
+                    ? styles.badgeHigh
+                    : styles.badgeLow,
                 ]}
               >
-                {result.severity.toUpperCase()}
-              </Text>
+                <Text
+                  style={[
+                    styles.badgeText,
+                    result.severity === "High"
+                      ? styles.textHigh
+                      : styles.textLow,
+                  ]}
+                >
+                  {result.severity.toUpperCase()}
+                </Text>
+              </View>
             </View>
+
+            <View style={styles.divider} />
+
+            <Text style={styles.sectionLabel}>Recommendation</Text>
+            <Text style={styles.recommendationText}>{result.advice}</Text>
+
+            <TouchableOpacity
+              style={styles.checkAgainButton}
+              onPress={() => setResult(null)}
+            >
+              <Text style={styles.checkAgainText}>Scan Another Area</Text>
+            </TouchableOpacity>
           </View>
+        ) : (
+          <View style={styles.placeholder}>
+            <Ionicons
+              name="body-outline"
+              size={48}
+              color={Colors.light.textSecondary}
+            />
+            <Text style={styles.placeholderText}>No Image Captured</Text>
+          </View>
+        )}
 
-          <Text style={styles.recommendationTitle}>Recommendation:</Text>
-          <Text style={styles.recommendationText}>{result.advice}</Text>
-
-          <Button
-            label="Scan Another Area"
-            onPress={() => setResult(null)}
-            variant="outline"
-            style={styles.scanAgainButton}
-          />
-        </View>
-      ) : (
-        <View style={styles.placeholder}>
-          <Text style={styles.placeholderText}>No Image Captured</Text>
-        </View>
-      )}
-
-      {!analyzing && !result && (
-        <Button
-          label="Open Camera"
-          onPress={() => setIsCameraOpen(true)}
-          size="lg"
-        />
-      )}
-    </ScrollView>
+        {!analyzing && !result && (
+          <TouchableOpacity
+            style={styles.primaryButton}
+            onPress={() => setIsCameraOpen(true)}
+          >
+            <Text style={styles.primaryButtonText}>Open Camera</Text>
+          </TouchableOpacity>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: Colors.light.background,
+  },
+  content: {
     padding: 24,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#111827",
+    fontSize: 28,
+    fontWeight: "700",
+    color: Colors.light.text,
     marginBottom: 8,
+    marginTop: 10,
+    letterSpacing: -0.5,
   },
   subtitle: {
-    color: "#6b7280",
-    marginBottom: 24,
+    color: Colors.light.textSecondary,
+    marginBottom: 32,
+    fontSize: 16,
+    lineHeight: 24,
   },
   loadingContainer: {
     height: 240,
@@ -131,41 +149,39 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 16,
-    color: "#6b7280",
+    color: Colors.light.textSecondary,
+    fontSize: 16,
   },
   resultCard: {
+    backgroundColor: Colors.light.card,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: Colors.light.border,
     padding: 24,
-    borderRadius: 12,
-    borderWidth: 2,
     marginBottom: 24,
+    shadowColor: "#64748B",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 2,
   },
-  cardHigh: {
-    backgroundColor: "#fef2f2",
-    borderColor: "#fee2e2",
-  },
-  cardLow: {
-    backgroundColor: "#f0fdf4",
-    borderColor: "#dcfce7",
-  },
-  resultTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 4,
-    color: "#111827",
-  },
-  severityContainer: {
+  resultHeader: {
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 16,
   },
-  severityLabel: {
-    color: "#4b5563",
-    marginRight: 8,
+  resultTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: Colors.light.text,
+    flex: 1,
   },
   badge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 9999,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    marginLeft: 12,
   },
   badgeHigh: {
     backgroundColor: "#fecaca",
@@ -175,7 +191,7 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: 12,
-    fontWeight: "bold",
+    fontWeight: "700",
   },
   textHigh: {
     color: "#991b1b",
@@ -183,30 +199,67 @@ const styles = StyleSheet.create({
   textLow: {
     color: "#166534",
   },
-  recommendationTitle: {
+  divider: {
+    height: 1,
+    backgroundColor: Colors.light.border,
+    marginBottom: 16,
+  },
+  sectionLabel: {
+    fontSize: 14,
     fontWeight: "600",
-    color: "#1f2937",
-    marginBottom: 4,
+    color: Colors.light.textSecondary,
+    marginBottom: 8,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
   },
   recommendationText: {
-    color: "#374151",
-    lineHeight: 20,
+    color: Colors.light.text,
+    lineHeight: 24,
+    fontSize: 16,
+    marginBottom: 24,
   },
-  scanAgainButton: {
-    marginTop: 24,
+  checkAgainButton: {
+    paddingVertical: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.light.border,
+    alignItems: "center",
+  },
+  checkAgainText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: Colors.light.text,
   },
   placeholder: {
     alignItems: "center",
     justifyContent: "center",
     height: 240,
-    backgroundColor: "#f3f4f6",
-    borderRadius: 12,
-    marginBottom: 24,
+    backgroundColor: Colors.light.card,
+    borderRadius: 20,
+    marginBottom: 32,
     borderWidth: 2,
     borderStyle: "dashed",
-    borderColor: "#d1d5db",
+    borderColor: Colors.light.border,
   },
   placeholderText: {
-    color: "#9ca3af",
+    color: Colors.light.textSecondary,
+    marginTop: 12,
+    fontSize: 16,
+  },
+  primaryButton: {
+    backgroundColor: Colors.light.primary,
+    paddingVertical: 16,
+    borderRadius: 16,
+    alignItems: "center",
+    shadowColor: Colors.light.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  primaryButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
   },
 });

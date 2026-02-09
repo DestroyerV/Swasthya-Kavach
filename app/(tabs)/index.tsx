@@ -1,8 +1,13 @@
+import { Colors } from "@/constants/theme";
+import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import {
+  Platform,
+  SafeAreaView,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -18,103 +23,217 @@ export default function HomeScreen() {
     });
   }, []);
 
+  const getGreeting = () => {
+    const hours = new Date().getHours();
+    if (hours < 12) return "Good Morning";
+    if (hours < 18) return "Good Afternoon";
+    return "Good Evening";
+  };
+
   return (
-    <ScrollView style={styles.container}>
-      {/* <View style={styles.header}>
-        <Text style={styles.greetingText}>Hello,</Text>
-        <Text style={styles.nameText}>{userName}</Text>
-      </View> */}
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}
+      >
+        <StatusBar barStyle="dark-content" />
 
-      <View style={styles.banner}>
-        <Text style={styles.bannerTitle}>How are you feeling today?</Text>
-        <Text style={styles.bannerSubtitle}>
-          Take a quick checkup to monitor your health.
-        </Text>
-      </View>
-
-      <Text style={styles.sectionTitle}>Quick Actions</Text>
-      <View style={styles.grid}>
-        <Link href="/(tabs)/anemia" asChild>
-          <TouchableOpacity style={styles.card}>
-            <View style={[styles.iconContainer, styles.bgRed100]}>
-              <Text style={styles.icon}>🩸</Text>
-            </View>
-            <Text style={styles.cardTitle}>Check Anemia</Text>
-            <Text style={styles.cardSubtitle}>Eye & Nail Analysis</Text>
+        {/* Header Section */}
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.greetingSub}>{getGreeting()},</Text>
+            <Text style={styles.greetingTitle}>{userName || "Guest"}</Text>
+          </View>
+          <TouchableOpacity style={styles.profileButton}>
+            <Ionicons
+              name="person-circle-outline"
+              size={32}
+              color={Colors.light.textSecondary}
+            />
           </TouchableOpacity>
-        </Link>
+        </View>
 
-        <Link href="/(tabs)/skin" asChild>
-          <TouchableOpacity style={styles.card}>
-            <View style={[styles.iconContainer, styles.bgOrange100]}>
-              <Text style={styles.icon}>✋</Text>
-            </View>
-            <Text style={styles.cardTitle}>Check Skin</Text>
-            <Text style={styles.cardSubtitle}>Infection Scanner</Text>
-          </TouchableOpacity>
-        </Link>
+        {/* Minimal Sentiment/Status Card instead of heavy banner */}
+        <View style={styles.statusCard}>
+          <View style={styles.statusTextContainer}>
+            <Text style={styles.statusTitle}>How are you feeling?</Text>
+            <Text style={styles.statusSubtitle}>
+              Track your health metrics today.
+            </Text>
+          </View>
+          <Ionicons
+            name="heart-circle-outline"
+            size={48}
+            color={Colors.light.primary}
+            style={{ opacity: 0.8 }}
+          />
+        </View>
 
-        <Link href="/(tabs)/respiratory" asChild>
-          <TouchableOpacity style={styles.card}>
-            <View style={[styles.iconContainer, styles.bgBlue100]}>
-              <Text style={styles.icon}>🫁</Text>
-            </View>
-            <Text style={styles.cardTitle}>Respiratory</Text>
-            <Text style={styles.cardSubtitle}>Breathing Sound</Text>
-          </TouchableOpacity>
-        </Link>
+        <Text style={styles.sectionTitle}>Health Checks</Text>
 
-        <Link href="/(tabs)/dehydration" asChild>
-          <TouchableOpacity style={styles.card}>
-            <View style={[styles.iconContainer, styles.bgYellow100]}>
-              <Text style={styles.icon}>🥤</Text>
-            </View>
-            <Text style={styles.cardTitle}>Dehydration</Text>
-            <Text style={styles.cardSubtitle}>Face Analysis</Text>
-          </TouchableOpacity>
-        </Link>
-      </View>
-    </ScrollView>
+        <View style={styles.grid}>
+          <Link href="/(tabs)/anemia" asChild>
+            <TouchableOpacity style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Ionicons
+                  name="water-outline"
+                  size={24}
+                  color={Colors.light.primary}
+                />
+                <Ionicons
+                  name="arrow-forward"
+                  size={16}
+                  color={Colors.light.textSecondary}
+                />
+              </View>
+              <View style={styles.cardContent}>
+                <Text style={styles.cardTitle}>Anemia</Text>
+                <Text style={styles.cardSubtitle}>Eye & Nail Analysis</Text>
+              </View>
+            </TouchableOpacity>
+          </Link>
+
+          <Link href="/(tabs)/skin" asChild>
+            <TouchableOpacity style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Ionicons
+                  name="body-outline"
+                  size={24}
+                  color={Colors.light.primary}
+                />
+                <Ionicons
+                  name="arrow-forward"
+                  size={16}
+                  color={Colors.light.textSecondary}
+                />
+              </View>
+              <View style={styles.cardContent}>
+                <Text style={styles.cardTitle}>Skin</Text>
+                <Text style={styles.cardSubtitle}>Infection Scanner</Text>
+              </View>
+            </TouchableOpacity>
+          </Link>
+
+          <Link href="/(tabs)/respiratory" asChild>
+            <TouchableOpacity style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Ionicons
+                  name="fitness-outline"
+                  size={24}
+                  color={Colors.light.primary}
+                />
+                <Ionicons
+                  name="arrow-forward"
+                  size={16}
+                  color={Colors.light.textSecondary}
+                />
+              </View>
+              <View style={styles.cardContent}>
+                <Text style={styles.cardTitle}>Respiratory</Text>
+                <Text style={styles.cardSubtitle}>Breathing Sound</Text>
+              </View>
+            </TouchableOpacity>
+          </Link>
+
+          <Link href="/(tabs)/dehydration" asChild>
+            <TouchableOpacity style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Ionicons
+                  name="sunny-outline"
+                  size={24}
+                  color={Colors.light.primary}
+                />
+                <Ionicons
+                  name="arrow-forward"
+                  size={16}
+                  color={Colors.light.textSecondary}
+                />
+              </View>
+              <View style={styles.cardContent}>
+                <Text style={styles.cardTitle}>Dehydration</Text>
+                <Text style={styles.cardSubtitle}>Face Analysis</Text>
+              </View>
+            </TouchableOpacity>
+          </Link>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.light.background,
+    paddingTop: Platform.OS === "android" ? 30 : 0,
+  },
   container: {
     flex: 1,
-    backgroundColor: "#f9fafb",
+    backgroundColor: Colors.light.background,
+  },
+  contentContainer: {
     padding: 24,
   },
   header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: 32,
+    marginTop: 10,
   },
-  greetingText: {
-    color: "#ef4444",
-    fontSize: 18,
+  greetingSub: {
+    fontSize: 16,
+    color: Colors.light.textSecondary,
+    fontWeight: "500",
+    marginBottom: 4,
   },
-  nameText: {
-    fontSize: 30,
-    fontWeight: "bold",
-    color: "#111827",
+  greetingTitle: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: Colors.light.text,
+    letterSpacing: -0.5,
   },
-  banner: {
-    backgroundColor: "#00b894",
-    borderRadius: 16,
+  profileButton: {
+    padding: 4,
+  },
+  statusCard: {
+    backgroundColor: Colors.light.card,
+    borderRadius: 20,
     padding: 24,
-    marginBottom: 24,
+    marginBottom: 32,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderWidth: 1,
+    borderColor: Colors.light.border,
+    // Soft shadow
+    shadowColor: "#64748B",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 2,
   },
-  bannerTitle: {
-    color: "#ffffff",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 8,
+  statusTextContainer: {
+    flex: 1,
+    paddingRight: 16,
   },
-  bannerSubtitle: {
-    color: "rgba(255, 255, 255, 0.8)",
+  statusTitle: {
+    color: Colors.light.text,
+    fontSize: 18,
+    fontWeight: "700",
+    marginBottom: 6,
+  },
+  statusSubtitle: {
+    color: Colors.light.textSecondary,
+    fontSize: 14,
+    lineHeight: 20,
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 16,
+    fontWeight: "700",
+    color: Colors.light.text,
+    marginBottom: 20,
+    letterSpacing: -0.5,
   },
   grid: {
     flexDirection: "row",
@@ -123,48 +242,36 @@ const styles = StyleSheet.create({
   },
   card: {
     width: "48%",
-    backgroundColor: "#ffffff",
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 1,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: "#f3f4f6",
-  },
-  iconContainer: {
-    width: 40,
-    height: 40,
+    backgroundColor: Colors.light.card,
+    padding: 20,
     borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 8,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: Colors.light.border,
+    shadowColor: "#64748B",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+    height: 160,
+    justifyContent: "space-between",
   },
-  icon: {
-    fontSize: 24,
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
   },
-  bgRed100: {
-    backgroundColor: "#fee2e2",
-  },
-  bgOrange100: {
-    backgroundColor: "#ffedd5",
-  },
-  bgBlue100: {
-    backgroundColor: "#dbeafe",
-  },
-  bgYellow100: {
-    backgroundColor: "#fef9c3",
+  cardContent: {
+    // mt: 'auto' handled by justify-between on card
   },
   cardTitle: {
-    fontWeight: "bold",
-    fontSize: 18,
+    fontWeight: "700",
+    fontSize: 16,
+    color: Colors.light.text,
     marginBottom: 4,
   },
   cardSubtitle: {
-    color: "#6b7280",
-    fontSize: 12,
+    color: Colors.light.textSecondary,
+    fontSize: 13,
   },
 });
