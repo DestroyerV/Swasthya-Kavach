@@ -1,9 +1,22 @@
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, View } from "react-native";
 
 export default function CheckupsScreen() {
   return (
-    <View className="flex-1 justify-center items-center bg-white">
-      <Text className="text-2xl font-bold">Checkup History</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Checkup History</Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+});

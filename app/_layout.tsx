@@ -5,7 +5,6 @@ import {
 } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import "../global.css";
 
 import { useMigrationHelper } from "@/db/useMigrationHelper";
 import { useColorScheme } from "@/hooks/use-color-scheme";

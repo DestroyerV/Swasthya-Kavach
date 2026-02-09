@@ -1,7 +1,7 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 
 export default function Index() {
   const router = useRouter();
@@ -13,13 +13,13 @@ export default function Index() {
 
   const checkUser = async () => {
     try {
-      const userId = await AsyncStorage.getItem('user_id');
+      const userId = await AsyncStorage.getItem("user_id");
       if (userId) {
         // User exists, go to Dashboard
-        router.replace('/(tabs)');
+        router.replace("/(tabs)");
       } else {
         // No user, go to Onboarding
-        router.replace('/(auth)/onboarding');
+        router.replace("/(auth)/onboarding");
       }
     } catch (e) {
       console.error(e);
@@ -29,8 +29,17 @@ export default function Index() {
   };
 
   return (
-    <View className="flex-1 justify-center items-center bg-white">
+    <View style={styles.container}>
       <ActivityIndicator size="large" color="#00b894" />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+  },
+});

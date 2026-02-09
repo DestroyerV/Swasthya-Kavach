@@ -1,8 +1,15 @@
-import CameraComponent from '@/components/CameraComponent';
-import { Button } from '@/components/ui/Button';
-import { analyzeDehydration, DehydrationResult } from '@/lib/ai/dehydration';
-import { useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, Text, View } from 'react-native';
+import CameraComponent from "@/components/CameraComponent";
+import { Button } from "@/components/ui/Button";
+import { analyzeDehydration, DehydrationResult } from "@/lib/ai/dehydration";
+import { useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 export default function DehydrationCheckScreen() {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
@@ -15,52 +22,123 @@ export default function DehydrationCheckScreen() {
     setResult(null);
 
     try {
-        const analysis = await analyzeDehydration(uri);
-        setResult(analysis);
+      const analysis = await analyzeDehydration(uri);
+      setResult(analysis);
     } catch (e) {
-        Alert.alert("Error", "Analysis failed");
+      Alert.alert("Error", "Analysis failed");
     } finally {
-        setAnalyzing(false);
+      setAnalyzing(false);
     }
   };
 
   if (isCameraOpen) {
-    return <CameraComponent onCapture={handleCapture} onClose={() => setIsCameraOpen(false)} title="Selfie for Dehydration" />;
+    return (
+      <CameraComponent
+        onCapture={handleCapture}
+        onClose={() => setIsCameraOpen(false)}
+        title="Selfie for Dehydration"
+      />
+    );
   }
 
   return (
-    <ScrollView className="flex-1 bg-white p-6">
-      <Text className="text-2xl font-bold text-gray-900 mb-2">Dehydration Check</Text>
-      <Text className="text-gray-500 mb-6">
+    <ScrollView style={styles.container}>
+      <Text style={styles.title}>Dehydration Check</Text>
+      <Text style={styles.subtitle}>
         Take a clear selfie. Ensure your face is well-lit and not covered.
       </Text>
 
       {analyzing ? (
-        <View className="h-60 justify-center items-center">
-            <ActivityIndicator size="large" color="#f1c40f" />
-            <Text className="mt-4 text-gray-500">Scanning facial features...</Text>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#f1c40f" />
+          <Text style={styles.loadingText}>Scanning facial features...</Text>
         </View>
       ) : result ? (
-        <View className="bg-yellow-50 p-6 rounded-xl border border-yellow-100 mb-6">
-             <Text className="text-lg font-semibold mb-2">Result: {result.risk} Risk</Text>
-             <Text className="text-gray-700 mb-4">{result.details}</Text>
-             
-             <Button 
-                label="Check Again" 
-                onPress={() => setResult(null)} 
-                variant="outline" 
-                className="mt-6"
-             />
+        <View style={styles.resultCard}>
+          <Text style={styles.resultTitle}>Result: {result.risk} Risk</Text>
+          <Text style={styles.resultDetails}>{result.details}</Text>
+
+          <Button
+            label="Check Again"
+            onPress={() => setResult(null)}
+            variant="outline"
+            style={styles.checkAgainButton}
+          />
         </View>
       ) : (
-         <View className="items-center justify-center h-60 bg-gray-100 rounded-xl mb-6 border-2 border-dashed border-gray-300">
-            <Text className="text-gray-400">No Image Captured</Text>
-         </View>
+        <View style={styles.placeholder}>
+          <Text style={styles.placeholderText}>No Image Captured</Text>
+        </View>
       )}
 
       {!analyzing && !result && (
-        <Button label="Take Selfie" onPress={() => setIsCameraOpen(true)} size="lg" />
+        <Button
+          label="Take Selfie"
+          onPress={() => setIsCameraOpen(true)}
+          size="lg"
+        />
       )}
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#ffffff",
+    padding: 24,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#111827",
+    marginBottom: 8,
+  },
+  subtitle: {
+    color: "#6b7280",
+    marginBottom: 24,
+  },
+  loadingContainer: {
+    height: 240,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 16,
+    color: "#6b7280",
+  },
+  resultCard: {
+    backgroundColor: "#fefce8",
+    padding: 24,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#fef9c3",
+    marginBottom: 24,
+  },
+  resultTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 8,
+  },
+  resultDetails: {
+    color: "#374151",
+    marginBottom: 16,
+  },
+  checkAgainButton: {
+    marginTop: 24,
+  },
+  placeholder: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: 240,
+    backgroundColor: "#f3f4f6",
+    borderRadius: 12,
+    marginBottom: 24,
+    borderWidth: 2,
+    borderStyle: "dashed",
+    borderColor: "#d1d5db",
+  },
+  placeholderText: {
+    color: "#9ca3af",
+  },
+});
